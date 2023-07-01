@@ -188,6 +188,90 @@
 
 		admin.site.register(<model_class_name>)
 		```
+<br />
+
+## [ビュー](https://docs.djangoproject.com/ja/4.2/intro/tutorial03/#overview)
+* ビューとは、Djangoのアプリケーションにおいて特定の機能を提供するWebページの「型（type）」であり、各々テンプレートを持っている.
+* ブログアプリケーションでの例
+	* ホームページ. 最新エントリーをいくつか表示.
+	* エントリー詳細ページ. 1エントリーへのパーマリンクページ. パーマリンクとは、ウェブサイトの各ページに対して個別に与えられているURLのこと.
+	* 年ごとのアーカイブページ. 指定された年のエントリーの月をすべて表示.
+	* 月ごとのアーカイブページ. 指定された月のエントリーの日をすべて表示.
+	* 日ごとのアーカイブページ. 指定された日のすべてのエントリーを表示.
+	* コメント投稿、エントリーに対するコメントの投稿を受け付け.
+* Djangoでは、ウェブページとコンテンツはビューによって提供される. 各ビューは、Python関数（クラスベースビューの場合はメソッド）として実装される. Djangoは、ビューをリクエストされたURL（ドメイン以降の部分）から決定する.
+* Djangoは、URLからビューを取得するために`URLconf`と呼ばれているものを使用する. `URLconf`は、URLパターンをビューにマッピングする.
+* `<>`の使用
+	* 例えば、`detail(request=<HttpRequest object>, question_id=34)`のような関数を考える. `question_id=34`の部分は、`project_name/app_name/urls.py`で指定するURLパターン中の`path()`で指定する`<int:question_id>`から来る.
+	* `<>`を使用すると、URLの一部がキャプチャされ、キーワード引数としてビュー関数に送信する. `<int:question_id>`を考えると、`:question_id`は一致するパターンを識別するために使用される名前を定義し、`int`部分はURLパスのこの部分に一致するパターンを決定するコンバータである. `:`はコンバータとパターン名を区切る.
+<br />
+
+## テンプレート
+* テンプレートを使用することで、Pythonからデザインを分離する.
+* デフォルトの設定ファイルでは、`DjangoTemplates`バックエンドが設定されており、その`APP_DIRS`のオプションが`True`になっている.規約により、`DjangoTemplates`は`INSTALLED_APPS`のそれぞれの`templates`サブディレクトリを検索する.
+* したがって、そのアプリに関するテンプレートは、`project_name/app_name/templates/app_name/xxx.html`に記述する必要がある.
+* テンプレートの名前空間
+	* `app_name`というサブディレクトリを作成せず、`project_name/app_name/templates/xxx.html`と直接`templates`ディレクトリの中にテンプレートを作成するのは良くない.
+	* Djangoは、名前がマッチした最初のテンプレートを使用するので、もし異なるアプリケーションの中に同じ名前のテンプレートがあった場合、Djangoはそれらを区別することができない.
+	* 上記を防ぐための一番簡単な方法は、テンプレートに **名前空間** を与えることである. そのため、アプリケーションと同じ名前を付けたサブディレクトリの中にテンプレートを置くのが良い.
+<br />
+
+## [レンダリング](https://docs.djangoproject.com/ja/4.2/intro/tutorial03/#a-shortcut-render)
+* テンプレートをロードしてコンテキストを値に入れ、テンプレートをレンダリングした結果を`HttpResponse`オブジェクトで返すという方法は非常によく使用されるので、Djangoはショートカットとして[`render()`](https://docs.djangoproject.com/ja/4.2/topics/http/shortcuts/#django.shortcuts.render)を提供している.
+* `render()`は、第1引数としてrequestオブジェクト、第2引数としてテンプレート名、第3引数（任意）として辞書を受け取る. `render()`は、テンプレートを指定のコンテキストでレンダリングし、その`HttpResponse`オブジェクトを返す.
+* すべてのビューを`render()`で書き換えることで、`loader`や`HttpResponse`を`import`する必要はなくなる.
+<br />
+
+## [404エラーの検出](https://docs.djangoproject.com/ja/4.2/intro/tutorial03/#raising-a-404-error)
+* `get()`を実行してオブジェクトが存在しない場合には、`Http404`を返すという方法は非常によく使用されるので、Djangoはショートカットとして[`get_object_or_404()`](https://docs.djangoproject.com/ja/4.2/topics/http/shortcuts/#django.shortcuts.get_object_or_404)を提供している.
+* `get_object_or_404()`は、第1引数としてDjangoモデル、任意の数のキーワード引数を受け取り、モデルのマネージャの[`get()`](https://docs.djangoproject.com/ja/4.2/ref/models/querysets/#get)に渡す. オブジェクトが存在しない場合は、`Http404`を発生させる.
+	```python
+	# get_object_or_404()を使用しない場合
+	from django.http import Http404
+	try:
+        question = Question.objects.get(pk=question_id)
+    except Question.DoesNotExist:
+        raise Http404("Question does not exist")
+
+	# get_object_or_404()を使用
+	from django.shortcuts import get_object_or_404
+	question = get_object_or_404(Question, pk=question_id)
+	```
+* [`get_list_or_404()`](https://docs.djangoproject.com/ja/4.2/topics/http/shortcuts/#django.shortcuts.get_list_or_404)という関数もある. この関数は`get_object_or_404()`と同じように動くが、`get()`ではなく、[`filter()`](https://docs.djangoproject.com/ja/4.2/ref/models/querysets/#django.db.models.query.QuerySet.filter)を使用する. リストが空の場合は`Http404`を返す.
+<br />
+
+## [テンプレート内URLのハードコーディングを避ける](https://docs.djangoproject.com/ja/4.2/intro/tutorial03/#removing-hardcoded-urls-in-templates)
+* テンプレート内でURLをハードコーディングしていると、URLの変更が困難になるので、テンプレートタグの`{% url %}`を使用する.
+* `{% url %}`は、`project_name/app_name/urls.py`に指定されたURLの定義を検索する. URLを変更する場合は、テンプレート内で`{% url %}`を使用しハードコーディングを避けていれば、`project_name/app_name/urls.py`を変更するだけで良い.
+<br />
+
+## [URLの名前空間](https://docs.djangoproject.com/ja/4.2/intro/tutorial03/#namespacing-url-names)
+* Djangoプロジェクトが複数のアプリケーションを含む場合、これらの間の同URL名を区別するには、`URLconf`に名前空間を追加すればよい.
+* `prject_name/app_name/urls.py`に`app_name`を追加する.
+	```python
+	from django.urls import path
+	
+	from . import views
+
+
+	app_name = "polls" # この1行を追加
+	urlpatterns = [
+    	path("", views.index, name="index"),
+    	path("<int:question_id>/", views.detail, name="detail"),
+    	path("<int:question_id>/results/", views.results, name="results"),
+    	path("<int:question_id>/vote/", views.vote, name="vote"),
+	]
+	```
+* 上記に合わせてテンプレート内のURLも変更する.
+	* 変更前
+		```html
+		<li><a href="{% url 'detail' question.id %}">{{ question.question_text }}</a></li>
+		```
+	* 変更後
+		```html
+		<li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+		```
+<br />
 
 ## 参照
 [ドキュメント](https://docs.djangoproject.com/ja/4.2/intro/)
