@@ -273,5 +273,53 @@
 		```
 <br />
 
+## [フォーム](https://docs.djangoproject.com/ja/4.2/intro/tutorial04/#write-a-minimal-form)
+* サーバ側のデータを更新するフォームを作成する場合は、`method="post"`（`method="get"`ではなく）を使用する.
+* 自サイト内をURLに指定したPOSTフォームにはすべて、[`{% csrf_token %}`](https://docs.djangoproject.com/ja/4.2/ref/templates/builtins/#std-templatetag-csrf_token)テンプレートタグを使用する. このテンプレートタグを使用することで、CSRFを防止することができる.
+* [CSRF（クロスサイトリクエストフォージェリ）](https://www.trendmicro.com/ja_jp/security-intelligence/research-reports/threat-solution/csrf.html)
+	* 概要
+		* 掲示板や問い合わせフォームなどを処理するWebアプリケーションが、本来拒否すべき他サイトからのリクエストを受信し処理してしまう.
+	* 攻撃手法
+		* 攻撃者は攻撃用Webページを準備し、ユーザがアクセスするように誘導する.
+		* ユーザが攻撃用Webページにアクセスすると、攻撃用Webページ内にあらかじめ用意されていた不正なリクエストが攻撃対象サーバに送られる.
+		* 攻撃サーバ上のWebアプリケーションは不正なリクエストを処理し、ユーザが意図していない処理が行われる.
+	* 対策
+		* Webアプリケーションをサイト外からのリクエストを受信、処理しないようにシステムを構築する.
+		* 攻撃者に推測されにくい任意の情報（セッションID、ページトークン、ランダムな数字など）を照合する処理を実装する.
+	* [XSS（クロスサイトスクリプティング）との違い](https://solution.fielding.co.jp/service/security/measures/column/column-9/#:~:text=%EF%BC%88CSRF%EF%BC%89%E3%81%A7%E3%81%99%E3%80%82-,%E3%82%AF%E3%83%AD%E3%82%B9%E3%82%B5%E3%82%A4%E3%83%88%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%EF%BC%88XSS%EF%BC%89%E3%81%AF%E3%80%81%E5%85%A5%E5%8A%9B%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E3%82%84%E6%8E%B2%E7%A4%BA%E6%9D%BF,URL%E3%82%92%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%81%95%E3%81%9B%E3%81%BE%E3%81%99%E3%80%82)
+		* XSSは、入力フォームや掲示板など動的ページの脆弱性を悪用した攻撃である.
+		* CSRFは、ユーザのリクエストを偽装する攻撃である. つまり、ユーザを攻撃用サイトに誘導し、攻撃用URLをクリックさせる. すると不正なリクエストが攻撃対象のサーバに送られ、攻撃用サイト（罠サイト）に誘導されたユーザには直接的な被害はないが、攻撃がユーザからのリクエストとして実行されるので、攻撃者として認識されることになる.
+
+	![CSRF_img](/img/csrf.png)
+* [`request.POST`](https://docs.djangoproject.com/ja/4.2/ref/request-response/#django.http.HttpRequest.POST)
+	* リクエストにフォームデータが含まれている場合、指定されたすべての HTTP POST パラメータを含む辞書のようなオブジェクト.
+	* キーを指定すると、送信したデータにアクセスできる.
+	* `request.POST`の値は常に文字列である.
+	* 指定したキーがなければ、`KeyEroor`を返す.
+* [`HttpResponseRedirect](https://docs.djangoproject.com/ja/4.2/ref/request-response/#django.http.HttpResponseRedirect)
+	* `HttpResponseRedirect`は1つの引数（リダイレクト先のURL）をとる.
+	* POSTデータが成功した後は常に`HttpResponseRedirect`を返す必要がある. これはDjango固有のものではなく、Web開発におけるベストプラクティスである.
+* [`reverse()`](https://docs.djangoproject.com/ja/4.2/ref/urlresolvers/#django.urls.reverse)
+	* `reverse()`を使用することで、ビュー関数中でのURLのハードコーディングを防ぐことができる.
+	* 引数として、制御を渡したいビューの名前と、そのビューに与えるURLパターンの位置引数を与える.
+<br />
+
+## [汎用ビュー](https://docs.djangoproject.com/ja/4.2/intro/tutorial04/#use-generic-views-less-code-is-better)
+* URLを介して渡されたパラメータに従ってデータベースからデータを取り出し、テンプレートをロードして、レンダリングしたテンプレートを返すことは、Web開発において極めてよく存在するケースなので、Djangoでは汎用ビュー（generic view）というショートカットを提供している.
+* 汎用ビューとは、よくあるパターンを抽象化して、Pythonコードすら書かずにアプリケーションを書き上げられる状態にしたものである.
+* 各汎用ビューは、自身がどのモデルに対して動作するのかを知っておく必要があるので、`model`属性を指定する.
+* コンテキスト変数の名前をデフォルトの名前から任意の名前に変更するには、`context_object_name`属性を与えて名前を指定する.
+* [ListView](https://docs.djangoproject.com/ja/4.2/ref/class-based-views/generic-display/#django.views.generic.list.ListView)
+	* オブジェクトのリストを表示する概念を抽象化したもの.
+	* デフォルトでは、`ListView`汎用ビューは`project_name/app name/<model_name>_list.html`という名前のテンプレートを使用する.
+	* `template_name`属性を指定すると、自動生成されたデフォルトのテンプレート名ではなく、指定したテンプレート名を使うように Djangoに伝えることができる.
+* [DetailView](https://docs.djangoproject.com/ja/4.2/ref/class-based-views/generic-display/#django.views.generic.detail.DetailView)
+	* あるタイプのオブジェクトの詳細ページを表示する概念を抽象化したもの.
+	* `pk`（primary key）という名前でURLからプライマリキーをキャプチャして渡すことになっているので、`project_name/app_name/urls.py`の`urlpatterns`には`<int:pk>`を`path()`に指定してやる必要がある.
+	* デフォルトでは、`DetailView`汎用ビューは`/project_name/app_name/<model_name>_detail.html`という名前のテンプレートを使用する.
+	* `template_name`属性を指定すると、自動生成されたデフォルトのテンプレート名ではなく、指定したテンプレート名を使うように Djangoに伝えることができる.
+* [汎用ビューのドキュメント](https://docs.djangoproject.com/ja/4.2/topics/class-based-views/)
+<br />
+
 ## 参照
 [ドキュメント](https://docs.djangoproject.com/ja/4.2/intro/)
