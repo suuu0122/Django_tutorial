@@ -17,6 +17,7 @@
 * [フォーム](#form)
 * [汎用ビュー](#generic_view)
 * [テスト](#test)
+* [静的ファイル](#static_file)
 * [参照](#reference)
 <br />
 
@@ -405,6 +406,23 @@
 	* 複雑なアプリケーションを開発する時には、継続的インテグレーション (continuous integration) のために、コミットの度に自動的にテストを実行するとよい. 継続的インテグレーションを行えば、品質管理それ自体が、少なくとも部分的には自動化できる.
 	* アプリケーションのテストされていない部分を発見するには、コードカバレッジをチェックするのが良いやり方である. これはまた、壊れやすいコードや使用されていないデッドコードの発見にも役に立つ. テストできないコードがある場合、そのコードはリファクタリングするか削除する必要があることを意味する. カバレッジはデッドコードの識別に役に立つ. 詳細は[Integration with coverage.py](https://docs.djangoproject.com/ja/4.2/topics/testing/advanced/#topics-testing-code-coverage)を参照する.
 * [Djangoにおけるテスト](https://docs.djangoproject.com/ja/4.2/topics/testing/)
+<br />
+
+<a id="static_file"></a>
+
+## 静的ファイル
+* Djangoでは、Webページをレンダリングするのに必要な画像、JavaScript、CSSなどのファイルを`静的（static）ファイル`と呼ぶ.
+* 大きなプロジェクトで、複数のアプリケーションから構成される場合、各アプリケーションが持っている静的ファイルを扱うことが難しくなるので、Djangoでは`django.contrib.staticfiles`を提供している. これは、静的なファイルを各アプリケーションから1つの場所に集め、運用環境で公開しやすくするためのものである.
+* Djangoは、`project_name/app_name/static/app_name/`ディレクトリから静的ファイルを探す.
+* CSS
+	* `project_name/app_name/static/app_name/style.css`ファイルとして保存する.
+	* CSSを利用するHTMLファイルの`head`に以下のコードを記述する.
+		```html
+		{% load static %}
+		<link rel="stylesheet" href="{% static 'app_name/style.css' %}">
+		```
+* 画像
+	* `project_name/app_name/static/app_name/images/`ディレクトリに画像を保存する.
 <br />
 
 <a id="reference"></a>
