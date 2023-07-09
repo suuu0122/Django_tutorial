@@ -1,5 +1,27 @@
 # Django_tutorial
 
+## インデックス
+* [プロジェクトの作成](#make_project)
+* [開発用サーバ](#development_server)
+* [アプリケーションの作成](#make_app)
+* [Databaseの設定](#database_conf)
+* [モデルの作成](#make_model)
+* [モデルの有効化](#model_activation)
+* [Django Admin](#django_admin)
+* [ビュー](#view)
+* [テンプレート](#template)
+* [レンダリング](#rendering)
+* [404エラーの検出](#404error)
+* [テンプレート内URLのハードコーディングを避ける](#url_hardcoding)
+* [URLの名前空間](#url_namespace)
+* [フォーム](#form)
+* [汎用ビュー](#generic_view)
+* [テスト](#test)
+* [参照](#reference)
+<br />
+
+<a id="make_project"></a>
+
 ## [プロジェクトの作成](https://docs.djangoproject.com/ja/4.2/intro/tutorial01/#creating-a-project)
 * プロジェクトを作成するには以下のコマンドを実行する.
 	```zsh
@@ -41,6 +63,8 @@
 		* [WSGIとともにデプロイするには](https://docs.djangoproject.com/ja/4.2/howto/deployment/wsgi/)
 <br />
 
+<a id="development_server"></a>
+
 ## [開発用サーバ](https://docs.djangoproject.com/ja/4.2/intro/tutorial01/#the-development-server)
 * Django開発サーバを起動するには、`manege.py`が直下にあるディレクトリに移動し、下記のコマンドを実行する.
 	```zsh
@@ -59,6 +83,8 @@
 	* コード変更の効果を得るためにサーバーを再起動する必要はない.
 	* ファイルの追加のようないくつかの行動は再起動をトリガーせず、このような場合はサーバーを再起動する必要がある.
 <br />
+
+<a id="make_app"></a>
 
 ## [アプリケーションの作成](https://docs.djangoproject.com/ja/4.2/intro/tutorial01/#creating-the-polls-app)
 * プロジェクトとアプリケーションの違い
@@ -83,6 +109,8 @@
 			views.py
 		```
 <br />
+
+<a id="database_conf"></a>
 
 ## [Databaseの設定](https://docs.djangoproject.com/ja/4.2/intro/tutorial02/#database-setup)
 * デフォルトの設定では、`SQLite`を使用する.
@@ -120,6 +148,8 @@
 	* `migrate`コマンドは、`INSTALLED_APPS`の設定を参照するとともに、`project_name/project_name/settings.py`ファイルのデータベース設定に従って必要なすべてのデータベースのテーブルを作成する.
 <br />
 
+<a id="make_model"></a>
+
 ## [モデルの作成](https://docs.djangoproject.com/ja/4.2/intro/tutorial02/#creating-models)
 * モデルは、データベースのレイアウトと、それに付随するメタデータである.
 * 設計思想
@@ -134,6 +164,8 @@
 * `Field`クラスの中には、必須の引数を持つものがある. 例えば、`CharField`には`max_length`を指定する必要がある. この引数はデータベーススキーマで使われる他、バリデーションでも使われる.
 * リレーションシップは、[`ForeignKey`](https://docs.djangoproject.com/ja/4.2/ref/models/fields/#django.db.models.ForeignKey)を使用して定義する. Djangoは、多対一、多対多、そして一対一のような一般的なデータベースリレーションシップすべてをサポートする.
 <br />
+
+<a id="model_activation"></a>
 
 ## [モデルの有効化](https://docs.djangoproject.com/ja/4.2/intro/tutorial02/#activating-models)
 * アプリケーションをプロジェクトに含めるには、構成クラスの参照を`INSTALLED_APPS`設定に追加する必要がある. `project_name/project_name/settings.py`の`INSTALLED_APPS`に、`project_name/app_name/apps.py`で定義されているクラスを追加する.
@@ -165,6 +197,8 @@
 * マイグレーションの作成と適用のコマンドが分割されている理由は、マイグレーションをバージョン管理システムにコミットし、アプリケーションとともに配布するためである. これによって、自分の開発が容易になるだけでなく、他の開発者や本番環境にとって使いやすいものになる.
 <br />
 
+<a id="django_admin"></a>
+
 ## [Django Admin](https://docs.djangoproject.com/ja/4.2/intro/tutorial02/#introducing-the-django-admin)
 * 設計思想
 	* Djangoは、コンテンツ追加、変更そして削除のための管理サイトの生成を完全に自動化している.
@@ -190,6 +224,8 @@
 		```
 <br />
 
+<a id="view"></a>
+
 ## [ビュー](https://docs.djangoproject.com/ja/4.2/intro/tutorial03/#overview)
 * ビューとは、Djangoのアプリケーションにおいて特定の機能を提供するWebページの「型（type）」であり、各々テンプレートを持っている.
 * ブログアプリケーションでの例
@@ -206,6 +242,8 @@
 	* `<>`を使用すると、URLの一部がキャプチャされ、キーワード引数としてビュー関数に送信する. `<int:question_id>`を考えると、`:question_id`は一致するパターンを識別するために使用される名前を定義し、`int`部分はURLパスのこの部分に一致するパターンを決定するコンバータである. `:`はコンバータとパターン名を区切る.
 <br />
 
+<a id="template"></a>
+
 ## テンプレート
 * テンプレートを使用することで、Pythonからデザインを分離する.
 * デフォルトの設定ファイルでは、`DjangoTemplates`バックエンドが設定されており、その`APP_DIRS`のオプションが`True`になっている.規約により、`DjangoTemplates`は`INSTALLED_APPS`のそれぞれの`templates`サブディレクトリを検索する.
@@ -216,11 +254,15 @@
 	* 上記を防ぐための一番簡単な方法は、テンプレートに **名前空間** を与えることである. そのため、アプリケーションと同じ名前を付けたサブディレクトリの中にテンプレートを置くのが良い.
 <br />
 
+<a id="rendering"></a>
+
 ## [レンダリング](https://docs.djangoproject.com/ja/4.2/intro/tutorial03/#a-shortcut-render)
 * テンプレートをロードしてコンテキストを値に入れ、テンプレートをレンダリングした結果を`HttpResponse`オブジェクトで返すという方法は非常によく使用されるので、Djangoはショートカットとして[`render()`](https://docs.djangoproject.com/ja/4.2/topics/http/shortcuts/#django.shortcuts.render)を提供している.
 * `render()`は、第1引数としてrequestオブジェクト、第2引数としてテンプレート名、第3引数（任意）として辞書を受け取る. `render()`は、テンプレートを指定のコンテキストでレンダリングし、その`HttpResponse`オブジェクトを返す.
 * すべてのビューを`render()`で書き換えることで、`loader`や`HttpResponse`を`import`する必要はなくなる.
 <br />
+
+<a id="404error"></a>
 
 ## [404エラーの検出](https://docs.djangoproject.com/ja/4.2/intro/tutorial03/#raising-a-404-error)
 * `get()`を実行してオブジェクトが存在しない場合には、`Http404`を返すという方法は非常によく使用されるので、Djangoはショートカットとして[`get_object_or_404()`](https://docs.djangoproject.com/ja/4.2/topics/http/shortcuts/#django.shortcuts.get_object_or_404)を提供している.
@@ -240,10 +282,14 @@
 * [`get_list_or_404()`](https://docs.djangoproject.com/ja/4.2/topics/http/shortcuts/#django.shortcuts.get_list_or_404)という関数もある. この関数は`get_object_or_404()`と同じように動くが、`get()`ではなく、[`filter()`](https://docs.djangoproject.com/ja/4.2/ref/models/querysets/#django.db.models.query.QuerySet.filter)を使用する. リストが空の場合は`Http404`を返す.
 <br />
 
+<a id="url_hardcoding"></a>
+
 ## [テンプレート内URLのハードコーディングを避ける](https://docs.djangoproject.com/ja/4.2/intro/tutorial03/#removing-hardcoded-urls-in-templates)
 * テンプレート内でURLをハードコーディングしていると、URLの変更が困難になるので、テンプレートタグの`{% url %}`を使用する.
 * `{% url %}`は、`project_name/app_name/urls.py`に指定されたURLの定義を検索する. URLを変更する場合は、テンプレート内で`{% url %}`を使用しハードコーディングを避けていれば、`project_name/app_name/urls.py`を変更するだけで良い.
 <br />
+
+<a id="url_namespace"></a>
 
 ## [URLの名前空間](https://docs.djangoproject.com/ja/4.2/intro/tutorial03/#namespacing-url-names)
 * Djangoプロジェクトが複数のアプリケーションを含む場合、これらの間の同URL名を区別するには、`URLconf`に名前空間を追加すればよい.
@@ -272,6 +318,8 @@
 		<li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
 		```
 <br />
+
+<a id="form"></a>
 
 ## [フォーム](https://docs.djangoproject.com/ja/4.2/intro/tutorial04/#write-a-minimal-form)
 * サーバ側のデータを更新するフォームを作成する場合は、`method="post"`（`method="get"`ではなく）を使用する.
@@ -304,6 +352,8 @@
 	* 引数として、制御を渡したいビューの名前と、そのビューに与えるURLパターンの位置引数を与える.
 <br />
 
+<a id="generic_view"></a>
+
 ## [汎用ビュー](https://docs.djangoproject.com/ja/4.2/intro/tutorial04/#use-generic-views-less-code-is-better)
 * URLを介して渡されたパラメータに従ってデータベースからデータを取り出し、テンプレートをロードして、レンダリングしたテンプレートを返すことは、Web開発において極めてよく存在するケースなので、Djangoでは汎用ビュー（generic view）というショートカットを提供している.
 * 汎用ビューとは、よくあるパターンを抽象化して、Pythonコードすら書かずにアプリケーションを書き上げられる状態にしたものである.
@@ -320,6 +370,44 @@
 	* `template_name`属性を指定すると、自動生成されたデフォルトのテンプレート名ではなく、指定したテンプレート名を使うように Djangoに伝えることができる.
 * [汎用ビューのドキュメント](https://docs.djangoproject.com/ja/4.2/topics/class-based-views/)
 <br />
+
+<a id="test"></a>
+
+## [テスト](https://docs.djangoproject.com/ja/4.2/intro/tutorial05/#introducing-automated-testing)
+* テストとは
+	* コードの動作をチェックするルーティン.
+	* テストにはレベルがあり、小さな機能に対して行われるもの (ある特定のモデルのメソッドは期待通りの値を返すか？) や、ソフトウェア全体の動作に対して行われるもの (サイト上でのユーザの一連の入力に対して、期待通りの結果が表示されるか？) がある.
+	* 自動テストは、テスト作業をシステムによって実行することであり、一度テストセットを作成すると、それからはアプリに変更を加えるたびに、意図した通りにコードが動作するか確認できる. 手動でテストする時間がかかることはない.
+* テストの必要性
+	* 高機能なアプリケーションでは、コンポーネント間の複雑な相互作用が数多くある. それらのコンポーネントのどれかを変更した場合、予想外の振る舞いをアプリケーションがする可能性がある. 自動テストを導入することによってプログラムが正しく動くことの確認を一瞬で終わらせることができ、またテストはプログラムのどこで予期せぬ動作が起きたかを見極めるのに役立つ.
+	* テストを書くことは、何時間もかけてアプリケーションの動作を確認したり、新しく発生した問題の原因を探したりすることを防ぐことができる.
+	* テストがない場合、アプリケーションの目的や意図した動作というものが曖昧になってしまうことがある. 自分自身で書いたコードであっても、時にはそのコードがすることを正確に理解するのに時間がかかってしまうことがある. テストを書いていると、何か間違ったことをしてしまった時には（自分自身では間違っていると気づかなかった場合でさえ）、間違いが起きた場所が明確になる.
+	* テストのないソフトは信用されず、多くの開発者はテストがないというだけで見ることさえしてくれない. Djangoを開発したJacob Kaplan-Mossは次の言葉を残している. 「テストのないコードは、デザインとして壊れている.」
+	* テストを書くことは、チームで共同作業を行う上でも役に立つ.
+* [テストの作成](https://docs.djangoproject.com/ja/4.2/intro/tutorial05/#create-a-test-to-expose-the-bug)
+	* テストを書く場所は、アプリケーション内の`test.py`ファイル. テストシステムが`test`で始まる名前のファイルの中から自動的にテストを見つけてくれる.
+* [テストの実行](https://docs.djangoproject.com/ja/4.2/intro/tutorial05/#running-tests)
+	* テストを実行するには下記コマンドを実行する.
+		```zsh
+		python manage.py test [app_name]
+		```
+* [Djangoテストクライアント](https://docs.djangoproject.com/ja/4.2/intro/tutorial05/#the-django-test-client)
+	* Djangoは、ビューレベルでのユーザとのインタラクション（ユーザが Web ブラウザを通して経験する動作）をシミュレートすることができる`Client`[https://docs.djangoproject.com/ja/4.2/topics/testing/tools/#django.test.Client]を用意しており、これを`test.py`の中や`shell`で使用できる.
+* テストデータ
+	* データベースは、各テストメソッドごとにリセットされるので、データベースには質問は残っていない.
+	* 各テストメソッドごとに必要なデータを関数内で作成する必要がある.
+* [テストのベストプラクティス](https://docs.djangoproject.com/ja/4.2/intro/tutorial05/#when-testing-more-is-better)
+	* モデルやビューごとに`TestClass`を分割する.
+	* テストしたい条件の集まりのそれぞれに対して、異なるテストメソッドを作成する.
+	* テストメソッドの名前は、その機能を説明するようなものにする.
+* [さらなるテスト](https://docs.djangoproject.com/ja/4.2/intro/tutorial05/#further-testing)
+	* `Selenium`[https://www.selenium.dev/]を使用することで、ブラウザがHTMLを実際にどのようにレンダリングのするのかをテストすることができる. これは、Djangoが生成したコードの振る舞いだけでなJavaScript の振る舞いも確認できる. Djangoには、`Selenium`のようなツールとの連携を容易にする`LiveServerTestCase`[https://docs.djangoproject.com/ja/4.2/topics/testing/tools/#django.test.LiveServerTestCase]が用意されている.
+	* 複雑なアプリケーションを開発する時には、継続的インテグレーション (continuous integration) のために、コミットの度に自動的にテストを実行するとよい. 継続的インテグレーションを行えば、品質管理それ自体が、少なくとも部分的には自動化できる.
+	* アプリケーションのテストされていない部分を発見するには、コードカバレッジをチェックするのが良いやり方である. これはまた、壊れやすいコードや使用されていないデッドコードの発見にも役に立つ. テストできないコードがある場合、そのコードはリファクタリングするか削除する必要があることを意味する. カバレッジはデッドコードの識別に役に立つ. 詳細は[Integration with coverage.py](https://docs.djangoproject.com/ja/4.2/topics/testing/advanced/#topics-testing-code-coverage)を参照する.
+* [Djangoにおけるテスト](https://docs.djangoproject.com/ja/4.2/topics/testing/)
+<br />
+
+<a id="reference"></a>
 
 ## 参照
 [ドキュメント](https://docs.djangoproject.com/ja/4.2/intro/)
